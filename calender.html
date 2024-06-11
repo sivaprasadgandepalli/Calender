@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Calender</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body{
+			width: 100%;
+			min-height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: aquamarine;
+		}
+		.head{
+			width: 100%;
+			padding-left: 10px;
+		}
+		h4{
+			text-align: left;
+			font-size: 1.5rem;
+			font-weight: semi-bold;
+		}
+		.calender-container{
+			min-width: 300px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			background: white;
+			color: black;
+			padding:1rem .9rem;
+			border-radius: 1rem;
+			transition: background .6s ease-in-out,color .6s ease-in-out;
+		}
+		.to-dark-mode{
+			background: #282828;
+			color: white;
+		}
+		.header{
+			width: 100%;
+			height: 40px;
+			text-align: center;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 1.3rem;
+			gap: 3px;
+			margin-top: .5rem;
+		}
+
+		.header span:not(.header span:nth-child(2)){
+			flex:1;
+		}
+		.header span:nth-child(2){
+			flex: 3;
+		}
+		.header span:nth-child(1),.header span:nth-child(3){
+			cursor: pointer;
+		}
+		.week-names{
+			width: 100%;
+			height: 30px;
+			text-align: center;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 1rem;
+			padding-inline:10px;
+		}
+		#days-container{
+			margin-top: .5rem;
+			width: 100%;
+			display: grid;
+			text-align: center;
+			grid-template-columns: repeat(7, minmax(0,1fr));
+			align-items: stretch;
+			justify-items: stretch;
+			gap: 5px;
+		}
+		.day{
+			display: block;
+			padding: 5px;
+			text-align: center;
+/*			background: aquamarine;*/
+		}
+		.darkmode-section{
+			width: 100%;
+			margin-block: 15px 20px;
+			display: flex;
+			margin-right: 1rem;
+			align-items: center;
+			gap: 3px;
+			justify-content: flex-end;
+		}
+		.toggle-btn-outer{
+			min-width: 40px;
+			height:22px;
+			background: lightgrey;
+			border-radius: 16px;
+			transition:all .5s ease-in-out;
+			cursor: pointer;
+		}
+		.toggle-btn-inner{
+			display: inline-block;
+			background: gray;
+			height: 18px;
+			width: 18px;
+			float: left;
+			border-radius: 50%;
+			margin-top: 2px;
+			margin-inline: 2px;
+			
+		}
+		.toggle-btn-outer-cls{
+			background:steelblue;
+		}
+		.toggle{
+			float: right;
+			background: dodgerblue;
+		}
+		.current-Date{
+			background:rgba(0, 0, 250, 0.3);
+			border-radius:8px;
+			color: white;
+		}
+	</style>
+</head>
+<body>
+	<div class="calender-container">
+		<div class="head">
+			<h4>Calender</h4>
+		</div>
+		<div class="header">
+			<span onclick="Decrement()"><</span>
+			<span class="date-display">April 2024</span>
+			<!-- <span>Date</span> -->
+			<span onclick="Increment()">></span>
+		</div>
+		<div class="week-names">
+			<span>Sun</span>
+			<span>Mon</span>
+			<span>Tue</span>
+			<span>Wed</span>
+			<span>Thu</span>
+			<span>Fri</span>
+			<span>Sat</span>
+		</div>
+
+		<div id="days-container">
+			<!-- days -->
+		</div>
+
+		<div class="darkmode-section">
+			<span>DarkMode</span>
+			<div class="toggle-btn-outer">
+				<span class="toggle-btn-inner"></span>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript">
+		let calender_container=document.querySelector('.calender-container');
+		let days_container=document.getElementById('days-container');
+		let header=document.getElementsByClassName('date-display')
+		let months=[31,28,31,30,31,30,31,31,30,31,30,31];
+		let monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"];
+		let inner=document.querySelector('.toggle-btn-inner');
+		let outer=document.querySelector('.toggle-btn-outer');
+		inner.addEventListener('click',ToggleDarkmode);
+		let date=new Date();
+		let month=date.getMonth();
+		let year=date.getFullYear();
+		let days=``;
+		window.addEventListener('load',display);
+		function display(){
+			days=``;
+			date=new Date(`${month+1}-01-${year}`)
+			let j=1;
+			numOfDays=month==1?checkLeapYear(year):months[month];
+			let actualDate=new Date();
+			for(let i=0;i<42;i++)
+			{
+				if(i>=date.getDay() && j<=numOfDays)
+				{
+					if(actualDate.getDate()===j && actualDate.getMonth()===month && actualDate.getFullYear()===year)
+					{
+						days+=`<span class="day current-Date">${j}</span>`;
+					}
+					else{
+						days+=`<span class="day">${j}</span>`;
+					}
+					j++;
+				}
+				else
+				{
+					days+=`<span></span>`;
+				}
+			}
+			days_container.innerHTML=days;
+			header[0].innerText=monthNames[month]+" "+date.getFullYear();
+		}
+		function Increment(){
+			month++;
+			if(month==12)
+			{
+				year++;
+				month=0;
+			}
+			display();
+		}
+		function Decrement(){
+			month--;
+			if(month==-1)
+			{
+				year--;
+				month=11;
+			}
+			display();
+		}
+		function checkLeapYear(Year){
+			if(Year%400==0||(Year%4==0 && Year%100!=0))
+				return 29;
+			return 28;
+		}
+		
+		function ToggleDarkmode(){
+			calender_container.classList.toggle('to-dark-mode');
+			inner.classList.toggle('toggle')
+			outer.classList.toggle('toggle-btn-outer-cls')
+		}
+	</script>
+</body>
+</html>
